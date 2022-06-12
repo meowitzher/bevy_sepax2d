@@ -1,0 +1,19 @@
+[package]
+name = "bevy_sepax2d"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+debug = ["bevy_prototype_lyon", "bevy/default"]
+
+[dependencies]
+sepax2d = "0.3.4"
+bevy = { version = "0.7", default-features = false, features = [] }
+bevy_prototype_lyon = { version = "0.5", optional = true }
+
+[[example]]
+name = "platformer"
+required-features = ["debug"]
+path = "examples/platformer.rs"
