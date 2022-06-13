@@ -12,7 +12,7 @@ use crate::components::{Movable, Sepax};
 /// * Resets the collision information from the previous frame ([`clear_correction_system`](clear_correction_system))
 /// * Updates the location of any `Sepax` component attached to a 
 /// [`Transform`](https://docs.rs/bevy/latest/bevy/prelude/struct.Transform.html#impl-Default)
-/// ([`update+movable_system](update_movable_system))
+/// ([`update_movable_system`](update_movable_system))
 /// * Provides inelastic collision between entities with a `Sepax` shape which are tagged 
 /// `Movable` and those that are not movable. ([`collision_system`](collision_system))
 ///
