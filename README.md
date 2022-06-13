@@ -32,7 +32,7 @@ To add a shape to your world, simply insert a `Sepax` struct into any entity.
 
 ```rust
 let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
-let convex = Convex::Polygon(polgon);
+let convex = Convex::Polygon(polygon);
 
 commands.spawn()
 .insert(Sepax { convex });

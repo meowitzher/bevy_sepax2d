@@ -30,12 +30,21 @@
 //! 
 //! To add a shape to your world, simply insert a [`Sepax`](components::Sepax) struct into any entity.
 //! 
-//! ```rust
-//! let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
-//! let convex = Convex::Polygon(polgon);
+//! ```rust,no_run
+//! use bevy::prelude::*;
+//! use sepax2d::prelude::*;
+//! use bevy_sepax2d::prelude::*;
 //! 
-//! commands.spawn()
-//! .insert(Sepax { convex });
+//! fn spawn_system(mut commands: Commands)
+//! {
+//! 
+//!     let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
+//!     let convex = Convex::Polygon(polygon);
+//! 
+//!     commands.spawn()
+//!     .insert(Sepax { convex });
+//! 
+//! }
 //! ```
 //! 
 //! [`Sepax`](components::Sepax) has one field, `convex`: This is an instance of the [`Convex`](Convex) enum, which has possible values
@@ -47,7 +56,14 @@
 //! [`shape_mut`](components::Sepax::shape_mut) methods, which provide easy access to references to the
 //! underlying shapes without need to match the enum.
 //! 
-//! ```rust
+//! ```rust,no_run
+//! use bevy::prelude::*;
+//! use sepax2d::prelude::*;
+//! use bevy_sepax2d::prelude::*;
+//! 
+//! #[derive(Component)]
+//! struct Bullet;
+//! 
 //! fn bullet_system
 //! (
 //!     mut bullets: Query<(&Bullet, &Sepax)>,
@@ -58,7 +74,7 @@
 //!    {
 //!         for target in targets.iter()
 //!         {
-//!             if sat_overlap(wall.shape(), bullet.shape())
+//!             if sat_overlap(target.shape(), bullet.shape())
 //!             {
 //!                 //Bullet hit target, now react appropriately
 //!             }
