@@ -6,6 +6,7 @@ version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/meowitzher/bevy_sepax2d/"
 keywords = ["gamedev", "2d", "collision", "bevy"]
+exclude = ["assets/"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
