@@ -7,6 +7,11 @@ use sepax2d::Shape;
 
 use crate::Convex;
 
+/// A component encapsulating a shape for collision detection. 
+/// A reference to the shape can be obtained using the [`shape`](Sepax::shape)
+/// method without need for `match`ing the internal enum, although
+/// `match` can be used when your behavior is dependent on the type of
+/// shape.
 #[derive(Component)]
 pub struct Sepax
 {
@@ -15,6 +20,14 @@ pub struct Sepax
 
 }
 
+/// A component which denotes that the entity is moving and colliding
+/// with immovable entities. `axes` contains a list of the normalized collision
+/// resolution vectors which point away from the immovable object that was
+/// collided with. For example, if landing on flat ground, axes would contain
+/// (0,1) on the next frame.
+/// 
+/// This list is cleared during the `PostUpdate` stage each frame when utilizing 
+/// the plugin.
 #[derive(Component)]
 pub struct Movable
 {
@@ -26,6 +39,9 @@ pub struct Movable
 impl Sepax
 {
 
+    /// A reference to the component's shape. As [`sat_overlap`](sepax2d::sat_overlap) and
+    /// [`sat_collision`](sepax2d::sat_collision) take references as input, this will be
+    /// the primary way to perform collision detection.
     pub fn shape(&self) -> &dyn Shape
     {
 
@@ -41,6 +57,10 @@ impl Sepax
 
     }
 
+    /// A mutable reference to the shape. Mostly used so that the position can be updated.
+    /// 
+    /// When using the `"debug"` feature, you will need to update the rendering information
+    /// if you mutate something else about the shape, such as size or vertices.
     pub fn shape_mut(&mut self) -> &mut dyn Shape
     {
 
@@ -56,6 +76,10 @@ impl Sepax
 
     }
 
+    /// A convenience method for obtaining the shape information as a `Path`. This is
+    /// particularly useful for changing collision shapes on the fly once the rendering
+    /// bundle has already been inserted into the entity. Check out the platformer
+    /// example to see this being done.
     #[cfg(feature = "debug")]
     pub fn shape_geometry(convex: &Convex) -> Path
     {
@@ -102,7 +126,6 @@ impl Sepax
 
                 let mut builder = PathBuilder::new();
 
-                let position = capsule.position;
                 let arm = capsule.arm();
                 let perp = capsule.perp();
 
@@ -122,6 +145,12 @@ impl Sepax
 
     }
 
+    /// A convenience method for obtaining the components necessary to draw a given shape!
+    /// Simple insert the return value into your entity as with any other bundle. Note that this
+    /// does not insert the `Sepax` component itself, so that needs to be inserted as well if
+    /// you want collisions to occur.
+    /// 
+    /// Requires "debug" feature.
     #[cfg(feature = "debug")]
     pub fn as_shape_bundle(convex: &Convex, fill: DrawMode) -> ShapeBundle
     {
