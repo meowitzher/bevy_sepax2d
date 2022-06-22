@@ -44,7 +44,9 @@ impl Plugin for SepaxPlugin
         (
             
             CoreStage::PostUpdate, 
-            collision_system.after(update_movable_system)
+            collision_system
+            .after(update_movable_system)
+            .before(bevy::transform::transform_propagate_system)
 
         );
 
