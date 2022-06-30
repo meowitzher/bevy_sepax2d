@@ -82,12 +82,21 @@
 //!     }
 //! }
 //! ```
+//! 
+//! ### Features
+//! 
+//! `debug` - Enables rendering of shapes.
+//! 
+//! `serde` - Enables (De)Serialization of Convex and Sepax types for easy loading.
 
 #[cfg(feature = "debug")]
 use bevy::prelude::*;
 
 #[cfg(feature = "debug")]
 use bevy_prototype_lyon::prelude::*;
+
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
 
 use sepax2d::prelude::*;
 
@@ -104,6 +113,7 @@ use components::Sepax;
 /// [`shape`](components::Sepax::shape)
 /// method to avoid `match`ing the enum directly. For use cases where your behavior
 /// depends on the type of shape, then you will need to use `match`.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Convex
 {
 

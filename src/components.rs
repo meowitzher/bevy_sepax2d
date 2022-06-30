@@ -3,6 +3,9 @@ use bevy::prelude::*;
 #[cfg(feature = "debug")]
 use bevy_prototype_lyon::{prelude::*, entity::ShapeBundle};
 
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
+
 use sepax2d::Shape;
 
 use crate::Convex;
@@ -13,6 +16,7 @@ use crate::Convex;
 /// `match` can be used when your behavior is dependent on the type of
 /// shape.
 #[derive(Component)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Sepax
 {
 

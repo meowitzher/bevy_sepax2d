@@ -131,6 +131,11 @@ commands.spawn()
 .insert(Movable { axes: Vec::new() });
 ```
 
+### Features
+`debug` - Enables rendering of shapes.
+
+`serde` - Enables (De)Serialization of Convex and Sepax types for easy loading.
+
 ### Examples
 The repository includes two example applications showcasing a basic platformer (which only uses
 the basic plugin), and a shmup which demonstrates some custom systems.
