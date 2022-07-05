@@ -5,7 +5,7 @@ use bevy_prototype_lyon::prelude::*;
 
 use sepax2d::prelude::*;
 
-use crate::components::{Movable, Sepax};
+use crate::components::{Movable, NoCollision, Sepax};
 
 /// A simple plugin which adds some basic functionality to your Bevy app!
 /// 
@@ -95,7 +95,7 @@ pub fn update_movable_system(mut query: Query<(&Transform, &Movable, &mut Sepax)
 /// component for use in your app. This points away from the immovable object. For example, if you are 
 /// making a platformer and want to check if the player has landed on something, you would check for
 /// axes with a positive y component. 
-pub fn collision_system(mut movable: Query<(&mut Movable, &mut Sepax, &mut Transform)>, walls: Query<&Sepax, Without<Movable>>)
+pub fn collision_system(mut movable: Query<(&mut Movable, &mut Sepax, &mut Transform), Without<NoCollision>>, walls: Query<&Sepax, (Without<Movable>, Without<NoCollision>)>)
 {
 
     for (mut correct, mut sepax, mut transform) in movable.iter_mut()

@@ -82,7 +82,8 @@ collide and update locations, but want to maintain old collision data until it h
 
 The `Movable` component signifies that an entity is dynamic. By contrast, the absence of a `Movable`
 component denotes a static object which is treated like a "wall" that movable entities should collide
-with. 
+with. Use the `NoCollision` marker component on either a `Movable` or non-`Movable` entity to exclude
+it from the collision process.
 
 The `Movable` struct contains a list of normalized collision resolution vectors from the previous frame during the
 `Update` stage for you to react to in your code. These vectors represent the direction AWAY from the

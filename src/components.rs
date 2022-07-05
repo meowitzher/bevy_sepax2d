@@ -40,6 +40,12 @@ pub struct Movable
 
 }
 
+/// A marker struct which tells the Sepax plugin not to perform collision checks on
+/// the entity it is attached to. Collision checks can still be performed in custom
+/// systems.
+#[derive(Component)]
+pub struct NoCollision;
+
 impl Sepax
 {
 

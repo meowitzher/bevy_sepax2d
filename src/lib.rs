@@ -148,6 +148,6 @@ pub mod prelude
     pub use crate::Convex;
 
     pub use crate::plugin::SepaxPlugin;
-    pub use crate::components::{Sepax, Movable};
+    pub use crate::components::{Sepax, NoCollision, Movable};
 
 }
