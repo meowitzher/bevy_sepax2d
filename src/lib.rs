@@ -113,6 +113,7 @@ use components::Sepax;
 /// [`shape`](components::Sepax::shape)
 /// method to avoid `match`ing the enum directly. For use cases where your behavior
 /// depends on the type of shape, then you will need to use `match`.
+#[derive(Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Convex
 {
