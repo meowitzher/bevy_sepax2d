@@ -96,7 +96,7 @@ fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Re
     let window_size = WindowSize { width: window.width(), height: window.height() };
     commands.insert_resource(window_size);
 
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(Camera2dBundle::default());
 
     let font = assets.load("PolandCanInto.otf");
     let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
@@ -105,7 +105,7 @@ fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Re
     commands.spawn_bundle(Text2dBundle
     {
 
-        text: Text::with_section("A and D to move, Space to jump \n \n W to change colliders", text_style.clone(), text_alignment),
+        text: Text::from_section("A and D to move, Space to jump \n \n W to change colliders", text_style.clone()).with_alignment(text_alignment),
         transform: Transform::from_xyz(0.0, 300.0, 0.0),
         ..default()
 
