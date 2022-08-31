@@ -25,6 +25,7 @@ struct PlayerColliders
     polygon: sepax2d::polygon::Polygon,
     circle: sepax2d::circle::Circle,
     aabb: sepax2d::aabb::AABB,
+    gram: sepax2d::parallelogram::Parallelogram,
     capsule: sepax2d::capsule::Capsule,
     index: usize
 
@@ -36,7 +37,7 @@ impl PlayerColliders
     fn next(&mut self) -> Sepax
     {
 
-        self.index = (self.index + 1) % 4;
+        self.index = (self.index + 1) % 5;
 
         match self.index
         {
@@ -44,6 +45,7 @@ impl PlayerColliders
             0 => Sepax { convex: Convex::Polygon(self.polygon.clone()) },
             1 => Sepax { convex: Convex::Circle(self.circle) },
             2 => Sepax { convex: Convex::AABB(self.aabb) },
+            3 => Sepax { convex: Convex::Parallelogram(self.gram) },
             _ => Sepax { convex: Convex::Capsule(self.capsule) }
 
         }
@@ -118,6 +120,7 @@ fn player_setup_system(mut commands: Commands)
 
     let capsule = Capsule::new((0.0, 0.0), (0.0, 20.0), 15.0);
     let aabb = AABB::new((0.0, 0.0), 20.0, 50.0);
+    let gram = Parallelogram::new((0.0, 0.0), (20.0, 10.0), (40.0, 50.0));
     let circle = Circle::new((0.0, 0.0), 25.0);
     let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
 
@@ -131,7 +134,7 @@ fn player_setup_system(mut commands: Commands)
     .insert(Movable { axes: Vec::new() })
     .insert(Velocity { x: 0.0, y: 0.0 });
 
-    commands.insert_resource(PlayerColliders { polygon: polygon, circle, aabb, capsule, index: 0 });
+    commands.insert_resource(PlayerColliders { polygon: polygon, circle, aabb, gram, capsule, index: 0 });
 
 }
 

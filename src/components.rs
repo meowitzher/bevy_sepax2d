@@ -61,6 +61,7 @@ impl Sepax
             Convex::Polygon(poly) => poly,
             Convex::Circle(circle) => circle,
             Convex::AABB(aabb) => aabb,
+            Convex::Parallelogram(gram) => gram,
             Convex::Capsule(capsule) => capsule
 
         }
@@ -80,6 +81,7 @@ impl Sepax
             Convex::Polygon(poly) => poly,
             Convex::Circle(circle) => circle,
             Convex::AABB(aabb) => aabb,
+            Convex::Parallelogram(gram) => gram,
             Convex::Capsule(capsule) => capsule
 
         }
@@ -115,6 +117,18 @@ impl Sepax
                     }
 
                 }
+
+                builder.build()
+
+            },
+            Convex::Parallelogram(gram) =>
+            {
+
+                let mut builder = PathBuilder::new();
+                builder.line_to(Vec2::new(gram.u.0, gram.u.1));
+                builder.line_to(Vec2::new(gram.u.0 + gram.v.0, gram.u.1 + gram.v.1));
+                builder.line_to(Vec2::new(gram.v.0, gram.v.1));
+                builder.line_to(Vec2::new(0.0, 0.0));
 
                 builder.build()
 
@@ -171,6 +185,7 @@ impl Sepax
             Convex::Polygon(poly) => poly.position(),
             Convex::Circle(circle) => circle.position(),
             Convex::AABB(aabb) => aabb.position(),
+            Convex::Parallelogram(gram) => gram.position(),
             Convex::Capsule(capsule) => capsule.position(),
 
         };

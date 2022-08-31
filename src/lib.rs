@@ -9,6 +9,7 @@
 //!
 //! |bevy|bevy_sepax2d|
 //! |---|---|
+//! |0.8|0.2, 0.3|
 //! |0.7|0.1|
 //!
 //! ### Usage
@@ -17,7 +18,7 @@
 //!
 //! ```toml
 //! sepax2d = "0.3"
-//! bevy_sepax2d = "0.1"
+//! bevy_sepax2d = "0.3"
 //! ```
 //! 
 //! There is an additional `debug` feature which can be used to render collision shapes to the screen.
@@ -25,7 +26,7 @@
 //! for rendering. This can be enabled in your Cargo.toml:
 //! 
 //! ```toml
-//! bevy_sepax2d = { version = "0.1", features = ["debug"] }
+//! bevy_sepax2d = { version = "0.3", features = ["debug"] }
 //! ```
 //! 
 //! To add a shape to your world, simply insert a [`Sepax`](components::Sepax) struct into any entity.
@@ -49,7 +50,7 @@
 //! 
 //! [`Sepax`](components::Sepax) has one field, `convex`: This is an instance of the [`Convex`](Convex) enum, which has possible values
 //! for each shape supported by sepax2d: [`Polygon`](sepax2d::polygon::Polygon), [`Circle`](sepax2d::circle::Circle),
-//! [`AABB`](sepax2d::aabb::AABB), and [`Capsule`](sepax2d::capsule::Capsule). Each variant contains
+//! [`AABB`](sepax2d::aabb::AABB), [`Parallelogram`](sepax2d::parallelogram::Parallelogram), and [`Capsule`](sepax2d::capsule::Capsule). Each variant contains
 //! an instance of the corresponding shape. 
 //! 
 //! The underlying shape can be conveniently accessed through the [`shape`](components::Sepax::shape) and 
@@ -121,6 +122,7 @@ pub enum Convex
     Polygon(Polygon),
     Circle(Circle),
     AABB(AABB),
+    Parallelogram(Parallelogram),
     Capsule(Capsule)
 
 }

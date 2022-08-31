@@ -9,7 +9,7 @@ Plugins and helpful methods for using sepax2d with Bevy for 2d overlap detection
 
 |bevy|bevy_sepax2d|
 |---|---|
-|0.8|0.2|
+|0.8|0.2, 0.3|
 |0.7|0.1|
 
 ### Usage
@@ -18,7 +18,7 @@ Add the following to the `[dependencies]` section of your `Cargo.toml`:
 
 ```toml
 sepax2d = "0.3"
-bevy_sepax2d = "0.2"
+bevy_sepax2d = "0.3"
 ```
 
 There is an additional `debug` feature which can be used to render collision shapes to the screen.
@@ -26,7 +26,7 @@ This relies on Bevy's default features as well as [bevy_prototype_lyon](https://
 for rendering. This can be enabled in your Cargo.toml:
 
 ```toml
-bevy_sepax2d = { version = "0.2", features = ["debug"] }
+bevy_sepax2d = { version = "0.3", features = ["debug"] }
 ```
 
 To add a shape to your world, simply insert a `Sepax` struct into any entity.
@@ -40,7 +40,7 @@ commands.spawn()
 ```
 
 `Sepax` has one field, `convex`: This is an instance of the `Convex` enum, which has possible values
-for each shape supported by sepax2d: `Polygon`, `Circle`, `AABB`, and `Capsule`. Each variant contains
+for each shape supported by sepax2d: `Polygon`, `Circle`, `AABB`, `Parallelogram`, and `Capsule`. Each variant contains
 an instance of the corresponding shape. Check the sepax2d 
 [documentation](https://docs.rs/sepax2d/latest/sepax2d/index.html) for information about each one.
 
