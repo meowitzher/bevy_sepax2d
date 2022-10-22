@@ -15,7 +15,7 @@ use crate::Convex;
 /// method without need for `match`ing the internal enum, although
 /// `match` can be used when your behavior is dependent on the type of
 /// shape.
-#[derive(Component)]
+#[derive(Clone, Component)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Sepax
 {
@@ -37,6 +37,91 @@ pub struct Movable
 {
 
     pub axes: Vec<(f32, f32)>
+
+}
+
+impl Movable
+{
+
+    ///Convenience method for determining if there was a collision to the left of the object.
+    pub fn left(&self) -> bool
+    {
+
+        for (x, _y) in self.axes.iter()
+        {
+
+            if *x > f32::EPSILON
+            {
+
+                return true;
+
+            }
+
+        }
+
+        false
+
+    }
+
+    ///Convenience method for determining if there was a collision to the right of the object.
+    pub fn right(&self) -> bool
+    {
+
+        for (x, _y) in self.axes.iter()
+        {
+
+            if *x < -f32::EPSILON
+            {
+
+                return true;
+
+            }
+
+        }
+
+        false
+
+    }
+
+    ///Convenience method for determining if there was a collision above the object.
+    pub fn above(&self) -> bool
+    {
+
+        for (_x, y) in self.axes.iter()
+        {
+
+            if *y < -f32::EPSILON
+            {
+
+                return true;
+
+            }
+
+        }
+
+        false
+
+    }
+
+    ///Convenience method for determining if there was a collision above the object.
+    pub fn below(&self) -> bool
+    {
+
+        for (_x, y) in self.axes.iter()
+        {
+
+            if *y > f32::EPSILON
+            {
+
+                return true;
+
+            }
+
+        }
+
+        false
+
+    }
 
 }
 
@@ -193,6 +278,55 @@ impl Sepax
         let shape = Sepax::shape_geometry(convex);
 
         GeometryBuilder::build_as(&shape, fill, Transform::from_xyz(position.0, position.1, 0.0))
+
+    }
+
+}
+
+#[allow(dead_code)]
+fn float_equal(left: f32, right: f32) -> bool
+{
+
+    return (left - right).abs() < 0.00001;
+
+}
+
+#[cfg(test)]
+mod miscellaneous_tests
+{
+
+    use super::*;
+    use sepax2d::prelude::*;
+
+    #[test]
+    fn test_clone()
+    {
+
+        let aabb = AABB::new((0.0, 10.0), 10.0, 5.0);
+        let sepax = Sepax { convex: Convex::AABB(aabb) };
+
+        let clone = sepax.clone();
+        assert!(float_equal(0.0, clone.shape().position().0));
+        assert!(float_equal(10.0, clone.shape().position().1));
+
+    }
+
+    #[test]
+    fn test_movable()
+    {
+
+        let movable1 = Movable { axes: vec![(-1.0, 0.0), (0.0, 1.0)] };
+        let movable2 = Movable { axes: vec![(0.0, -1.0), (1.0, 0.0)] };
+
+        assert!(movable1.right());
+        assert!(movable1.below());
+        assert!(!movable1.left());
+        assert!(!movable1.above());
+
+        assert!(!movable2.right());
+        assert!(!movable2.below());
+        assert!(movable2.left());
+        assert!(movable2.above());
 
     }
 
