@@ -9,6 +9,7 @@
 //!
 //! |bevy|bevy_sepax2d|
 //! |---|---|
+//! |0.9|0.4|
 //! |0.8|0.2, 0.3|
 //! |0.7|0.1|
 //!
@@ -42,8 +43,7 @@
 //!     let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
 //!     let convex = Convex::Polygon(polygon);
 //! 
-//!     commands.spawn()
-//!     .insert(Sepax { convex });
+//!     commands.spawn(Sepax { convex });
 //! 
 //! }
 //! ```
@@ -140,8 +140,8 @@ pub fn spawn_debug(commands: &mut Commands, convex: Convex, fill: DrawMode)
 
     let shape = Sepax::as_shape_bundle(&convex, fill);
 
-    let mut entity = commands.spawn();
-    entity.insert(Sepax { convex }).insert_bundle(shape);
+    commands.spawn(Sepax { convex })
+    .insert(shape);
 
 }
 

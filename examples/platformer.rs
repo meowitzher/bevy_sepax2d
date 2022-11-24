@@ -11,6 +11,7 @@ const TERMINAL: f32 = 2000.0;
 const SPEED: f32 = 200.0;
 const JUMP_SPEED: f32 = 500.0;
 
+#[derive(Resource)]
 struct WindowSize
 {
 
@@ -19,6 +20,7 @@ struct WindowSize
 
 }
 
+#[derive(Resource)]
 struct PlayerColliders
 {
 
@@ -68,16 +70,26 @@ fn main()
 
     App::new()
     .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
-    .insert_resource(WindowDescriptor
-    {
+    .add_plugins(DefaultPlugins.set
+    (
 
-        title: "Platformer Example".to_string(),
-        width: 1024.0,
-        height: 768.0,
-        ..default()
+        WindowPlugin
+        {
 
-    })
-    .add_plugins(DefaultPlugins)
+            window: WindowDescriptor
+            {
+        
+                title: "Platformer Example".to_string(),
+                width: 1024.0,
+                height: 768.0,
+                ..default()
+        
+            },
+            ..default()
+
+        }
+
+    ))
     .add_plugin(SepaxPlugin)
     .add_startup_system(setup_system)
     .add_startup_system(player_setup_system)
@@ -98,13 +110,13 @@ fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Re
     let window_size = WindowSize { width: window.width(), height: window.height() };
     commands.insert_resource(window_size);
 
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let font = assets.load("PolandCanInto.otf");
     let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
     let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
 
-    commands.spawn_bundle(Text2dBundle
+    commands.spawn(Text2dBundle
     {
 
         text: Text::from_section("A and D to move, Space to jump \n \n W to change colliders", text_style.clone()).with_alignment(text_alignment),
@@ -128,8 +140,7 @@ fn player_setup_system(mut commands: Commands)
 
     let convex = Convex::Polygon(polygon.clone());
 
-    commands.spawn()
-    .insert_bundle(Sepax::as_shape_bundle(&convex, player))
+    commands.spawn(Sepax::as_shape_bundle(&convex, player))
     .insert(Sepax { convex })
     .insert(Movable { axes: Vec::new() })
     .insert(Velocity { x: 0.0, y: 0.0 });

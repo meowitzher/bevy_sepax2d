@@ -2,7 +2,7 @@
 name = "bevy_sepax2d"
 license = "MIT OR Apache-2.0"
 description = "Plugins and helpful methods for using sepax2d with Bevy for 2d overlap detection and collision resolution."
-version = "0.3.1"
+version = "0.4.0"
 edition = "2021"
 repository = "https://github.com/meowitzher/bevy_sepax2d/"
 keywords = ["gamedev", "2d", "collision", "bevy"]
@@ -16,8 +16,8 @@ serde = ["dep:serde", "sepax2d/serde"]
 
 [dependencies]
 sepax2d = "0.3.8"
-bevy = { version = "0.8", default-features = false, features = [] }
-bevy_prototype_lyon = { version = "0.6", optional = true }
+bevy = { version = "0.9", default-features = false, features = [] }
+bevy_prototype_lyon = { version = "0.7", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]

@@ -17,6 +17,7 @@ const LASER_SPEED: f32 = 1000.0;
 const ENEMY_SIZE: f32 = 20.0;
 const ENEMY_SPEED: f32 = 250.0;
 
+#[derive(Resource)]
 struct WindowSize
 {
 
@@ -46,10 +47,11 @@ struct Enemy
 
 }
 
+#[derive(Resource)]
 struct LastSpawn
 {
 
-    time: u64
+    time: f32
 
 }
 
@@ -58,16 +60,26 @@ fn main()
 
     App::new()
     .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
-    .insert_resource(WindowDescriptor
-    {
-
-        title: "Shmup Example".to_string(),
-        width: 1024.0,
-        height: 768.0,
-        ..default()
-
-    })
-    .add_plugins(DefaultPlugins)
+    .add_plugins(DefaultPlugins.set
+    (
+    
+        WindowPlugin
+        {
+    
+            window: WindowDescriptor
+            {
+            
+                title: "Shmup Example".to_string(),
+                width: 1024.0,
+                height: 768.0,
+                ..default()
+            
+            },
+            ..default()
+    
+        }
+    
+    ))
     .add_plugin(SepaxPlugin)
     .add_startup_system(setup_system)
     .add_startup_system(player_setup_system)
@@ -91,15 +103,15 @@ fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Re
     let window = windows.get_primary_mut().unwrap();
     let window_size = WindowSize { width: window.width(), height: window.height() };
     commands.insert_resource(window_size);
-    commands.insert_resource(LastSpawn { time: 0 });
+    commands.insert_resource(LastSpawn { time: 0.0 });
 
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let font = assets.load("PolandCanInto.otf");
     let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
     let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
 
-    commands.spawn_bundle(Text2dBundle
+    commands.spawn(Text2dBundle
     {
 
         text: Text::from_section("WASD to move, Click to shoot", text_style.clone()).with_alignment(text_alignment),
@@ -118,8 +130,7 @@ fn player_setup_system(mut commands: Commands)
     let player = DrawMode::Fill(FillMode::color(Color::rgba(0.2, 0.2, 1.0, 1.0)));
     let convex = Convex::Circle(circle);
 
-    commands.spawn()
-    .insert_bundle(Sepax::as_shape_bundle(&convex, player))
+    commands.spawn(Sepax::as_shape_bundle(&convex, player))
     .insert(Sepax { convex })
     .insert(Movable { axes: Vec::new() })
     .insert(Player);
@@ -204,8 +215,7 @@ fn player_shoot_input_system(mut commands: Commands, player: Query<&Transform, W
                 let convex = Convex::Capsule(Capsule::new(starting, (LASER_HALF * normal.0, LASER_HALF * normal.1), LASER_RADIUS));
                 let laser = DrawMode::Fill(FillMode::color(Color::rgba(0.7, 0.7, 1.0, 1.0)));
 
-                commands.spawn()
-                .insert_bundle(Sepax::as_shape_bundle(&convex, laser))
+                commands.spawn(Sepax::as_shape_bundle(&convex, laser))
                 .insert(Sepax { convex })
                 .insert(Movable { axes: Vec::new() })
                 .insert(Laser { x: LASER_SPEED * normal.0, y: LASER_SPEED * normal.1 });
@@ -287,9 +297,9 @@ fn spawn(seconds: u64) -> bool
 fn enemy_spawn_system(mut commands: Commands, time: Res<Time>, size: Res<WindowSize>, mut last: ResMut<LastSpawn>)
 {
 
-    let time = time.time_since_startup().as_secs();
+    let time = time.elapsed_seconds();
 
-    if time > last.time && spawn(time)
+    if time > last.time + 1.0 && spawn(time as u64)
     {
 
         last.time = time;
@@ -342,8 +352,7 @@ fn enemy_spawn_system(mut commands: Commands, time: Res<Time>, size: Res<WindowS
         let convex = Convex::AABB(AABB::new(position, ENEMY_SIZE, ENEMY_SIZE));
         let enemy = DrawMode::Fill(FillMode::color(Color::rgba(1.0, 0.4, 0.4, 1.0)));
 
-        commands.spawn()
-        .insert_bundle(Sepax::as_shape_bundle(&convex, enemy))
+        commands.spawn(Sepax::as_shape_bundle(&convex, enemy))
         .insert(Sepax { convex })
         .insert(Movable { axes: Vec::new() })
         .insert(Enemy { x: velocity.0, y: velocity.1 });
@@ -404,7 +413,7 @@ fn game_over_system(mut commands: Commands, players: Query<(Entity, &Sepax), (Wi
                 let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
                 let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
             
-                commands.spawn_bundle(Text2dBundle
+                commands.spawn(Text2dBundle
                 {
             
                     text: Text::from_section("Game Over!", text_style.clone()).with_alignment(text_alignment),

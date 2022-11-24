@@ -9,6 +9,7 @@ Plugins and helpful methods for using sepax2d with Bevy for 2d overlap detection
 
 |bevy|bevy_sepax2d|
 |---|---|
+|0.9|0.4|
 |0.8|0.2, 0.3|
 |0.7|0.1|
 
@@ -35,8 +36,7 @@ To add a shape to your world, simply insert a `Sepax` struct into any entity.
 let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
 let convex = Convex::Polygon(polygon);
 
-commands.spawn()
-.insert(Sepax { convex });
+commands.spawn(Sepax { convex });
 ```
 
 `Sepax` has one field, `convex`: This is an instance of the `Convex` enum, which has possible values
@@ -127,8 +127,7 @@ let convex = Convex::Circle(circle);
 
 let player = DrawMode::Fill(FillMode::color(Color::WHITE));
 
-commands.spawn()
-.insert_bundle(Sepax::as_shape_bundle(&convex, player))
+commands.spawn(Sepax::as_shape_bundle(&convex, player))
 .insert(Sepax { convex })
 .insert(Movable { axes: Vec::new() });
 ```
