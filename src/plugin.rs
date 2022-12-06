@@ -19,6 +19,16 @@ use crate::components::{Movable, NoCollision, Sepax};
 /// Each of the above systems is public for you to manually add to your app if you want some but not all.
 pub struct SepaxPlugin;
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum SepaxSystems
+{
+
+    Clear,
+    Update,
+    Collision
+
+}
+
 impl Plugin for SepaxPlugin
 {
 
@@ -31,6 +41,7 @@ impl Plugin for SepaxPlugin
 
             CoreStage::PostUpdate,
             clear_correction_system
+            .label(SepaxSystems::Clear)
 
         )
         .add_system_to_stage
@@ -38,6 +49,7 @@ impl Plugin for SepaxPlugin
 
             CoreStage::PostUpdate,
             update_movable_system.after(clear_correction_system)
+            .label(SepaxSystems::Update)
 
         )
         .add_system_to_stage
@@ -45,7 +57,8 @@ impl Plugin for SepaxPlugin
             
             CoreStage::PostUpdate, 
             collision_system
-            .after(update_movable_system)
+            .label(SepaxSystems::Collision)
+            .after(SepaxSystems::Update)
             .before(bevy::transform::transform_propagate_system)
 
         );
