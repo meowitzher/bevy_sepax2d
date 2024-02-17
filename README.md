@@ -7,11 +7,12 @@ Plugins and helpful methods for using sepax2d with Bevy for 2d overlap detection
 
 ### Compatible Versions
 
-|bevy|bevy_sepax2d|
-|---|---|
-|0.9|0.4|
-|0.8|0.2, 0.3|
-|0.7|0.1|
+| bevy | bevy_sepax2d |
+|------|--------------|
+| 0.12 | 0.5          |
+| 0.9  | 0.4          |
+| 0.8  | 0.2, 0.3     |
+| 0.7  | 0.1          |
 
 ### Usage
 
@@ -19,7 +20,7 @@ Add the following to the `[dependencies]` section of your `Cargo.toml`:
 
 ```toml
 sepax2d = "0.3"
-bevy_sepax2d = "0.3"
+bevy_sepax2d = "0.5"
 ```
 
 There is an additional `debug` feature which can be used to render collision shapes to the screen.

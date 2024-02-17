@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::*;
 use rand::prelude::*;
 
@@ -66,41 +67,40 @@ fn main()
         WindowPlugin
         {
     
-            window: WindowDescriptor
+            primary_window: Some(Window
             {
             
                 title: "Shmup Example".to_string(),
-                width: 1024.0,
-                height: 768.0,
+                resolution: WindowResolution::new(1024.0, 768.0),
                 ..default()
             
-            },
+            }),
             ..default()
     
         }
     
     ))
-    .add_plugin(SepaxPlugin)
-    .add_startup_system(setup_system)
-    .add_startup_system(player_setup_system)
-    .add_startup_system_to_stage(StartupStage::PostStartup, wall_setup_system)
-    .add_system(player_movement_input_system)
-    .add_system(player_shoot_input_system)
-    .add_system(laser_velocity_system)
-    .add_system(laser_despawn_system)
-    .add_system(laser_hit_system)
-    .add_system(enemy_spawn_system)
-    .add_system(enemy_velocity_system)
-    .add_system(enemy_collision_system.before(enemy_velocity_system))
-    .add_system(game_over_system)
+    .add_plugins(SepaxPlugin)
+    .add_systems(Startup, setup_system)
+    .add_systems(Startup, player_setup_system)
+    .add_systems(PostStartup, wall_setup_system)
+    .add_systems(Update, player_movement_input_system)
+    .add_systems(Update, player_shoot_input_system)
+    .add_systems(Update, laser_velocity_system)
+    .add_systems(Update, laser_despawn_system)
+    .add_systems(Update, laser_hit_system)
+    .add_systems(Update, enemy_spawn_system)
+    .add_systems(Update, enemy_velocity_system)
+    .add_systems(Update, enemy_collision_system.before(enemy_velocity_system))
+    .add_systems(Update, game_over_system)
     .run();
 
 }
 
-fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Res<AssetServer>)
+fn setup_system(mut commands: Commands, mut windows: Query<&mut Window>, assets: Res<AssetServer>)
 {
 
-    let window = windows.get_primary_mut().unwrap();
+    let window = windows.get_single_mut().unwrap();
     let window_size = WindowSize { width: window.width(), height: window.height() };
     commands.insert_resource(window_size);
     commands.insert_resource(LastSpawn { time: 0.0 });
@@ -108,7 +108,7 @@ fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Re
     commands.spawn(Camera2dBundle::default());
 
     let font = assets.load("PolandCanInto.otf");
-    let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
+    let text_alignment = TextAlignment::Center;
     let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
 
     commands.spawn(Text2dBundle
@@ -127,10 +127,10 @@ fn player_setup_system(mut commands: Commands)
 
     let circle = Circle::new((0.0, 0.0), PLAYER_RADIUS);
 
-    let player = DrawMode::Fill(FillMode::color(Color::rgba(0.2, 0.2, 1.0, 1.0)));
+    let player = Fill::color(Color::rgba(0.2, 0.2, 1.0, 1.0));
     let convex = Convex::Circle(circle);
 
-    commands.spawn(Sepax::as_shape_bundle(&convex, player))
+    commands.spawn((Sepax::as_shape_bundle(&convex), player))
     .insert(Sepax { convex })
     .insert(Movable { axes: Vec::new() })
     .insert(Player);
@@ -140,7 +140,7 @@ fn player_setup_system(mut commands: Commands)
 fn wall_setup_system(mut commands: Commands, size: Res<WindowSize>)
 {
 
-    let walls = DrawMode::Fill(FillMode::color(Color::rgba(0.8, 0.8, 0.8, 1.0)));
+    let walls = Fill::color(Color::rgba(0.8, 0.8, 0.8, 1.0));
 
     let half_width = size.width * 0.5;
     let half_height = size.height * 0.5;
@@ -189,23 +189,22 @@ fn player_movement_input_system(keyboard: Res<Input<KeyCode>>, mut query: Query<
 
 }
 
-fn player_shoot_input_system(mut commands: Commands, player: Query<&Transform, With<Player>>, windows: Res<Windows>, buttons: Res<Input<MouseButton>>, size: Res<WindowSize>)
+fn player_shoot_input_system(mut commands: Commands, player: Query<&Transform, With<Player>>, windows: Query<&mut Window>, buttons: Res<Input<MouseButton>>, size: Res<WindowSize>)
 {
 
     if let Ok(transform) = player.get_single()
     {
 
-        let window = windows.get_primary().unwrap();
+        let window = windows.get_single().unwrap();
 
         if let Some(position) = window.cursor_position()
         {
-
             let position = (position.x - (size.width * 0.5), position.y - (size.height * 0.5));
 
             if buttons.just_pressed(MouseButton::Left)
             {
 
-                let direction_vector = (position.0 - transform.translation.x, position.1 - transform.translation.y);
+                let direction_vector = (position.0 - transform.translation.x, -position.1 - transform.translation.y);
 
                 let angle = f32::atan2(direction_vector.1, direction_vector.0);
                 let normal = (f32::cos(angle), f32::sin(angle));
@@ -213,9 +212,9 @@ fn player_shoot_input_system(mut commands: Commands, player: Query<&Transform, W
                 let starting = (transform.translation.x + (PLAYER_RADIUS * normal.0), transform.translation.y + (PLAYER_RADIUS * normal.1));
 
                 let convex = Convex::Capsule(Capsule::new(starting, (LASER_HALF * normal.0, LASER_HALF * normal.1), LASER_RADIUS));
-                let laser = DrawMode::Fill(FillMode::color(Color::rgba(0.7, 0.7, 1.0, 1.0)));
+                let laser = Fill::color(Color::rgba(0.7, 0.7, 1.0, 1.0));
 
-                commands.spawn(Sepax::as_shape_bundle(&convex, laser))
+                commands.spawn((Sepax::as_shape_bundle(&convex), laser))
                 .insert(Sepax { convex })
                 .insert(Movable { axes: Vec::new() })
                 .insert(Laser { x: LASER_SPEED * normal.0, y: LASER_SPEED * normal.1 });
@@ -350,9 +349,9 @@ fn enemy_spawn_system(mut commands: Commands, time: Res<Time>, size: Res<WindowS
         let velocity = (f32::cos(angle) * ENEMY_SPEED, f32::sin(angle) * ENEMY_SPEED);
 
         let convex = Convex::AABB(AABB::new(position, ENEMY_SIZE, ENEMY_SIZE));
-        let enemy = DrawMode::Fill(FillMode::color(Color::rgba(1.0, 0.4, 0.4, 1.0)));
+        let enemy = Fill::color(Color::rgba(1.0, 0.4, 0.4, 1.0));
 
-        commands.spawn(Sepax::as_shape_bundle(&convex, enemy))
+        commands.spawn((Sepax::as_shape_bundle(&convex), enemy))
         .insert(Sepax { convex })
         .insert(Movable { axes: Vec::new() })
         .insert(Enemy { x: velocity.0, y: velocity.1 });
@@ -410,7 +409,7 @@ fn game_over_system(mut commands: Commands, players: Query<(Entity, &Sepax), (Wi
                 commands.entity(enemy).despawn();
 
                 let font = assets.load("PolandCanInto.otf");
-                let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
+                let text_alignment = TextAlignment::Center;
                 let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
             
                 commands.spawn(Text2dBundle

@@ -8,7 +8,7 @@ use sepax2d::prelude::*;
 use crate::components::{Movable, NoCollision, Sepax};
 
 /// A simple plugin which adds some basic functionality to your Bevy app!
-/// 
+///
 /// * Resets the collision information from the previous frame ([`clear_correction_system`](clear_correction_system))
 /// * Updates the location of any `Sepax` component attached to a 
 /// [`Transform`](https://docs.rs/bevy/latest/bevy/prelude/struct.Transform.html#impl-Default)
@@ -19,7 +19,7 @@ use crate::components::{Movable, NoCollision, Sepax};
 /// Each of the above systems is public for you to manually add to your app if you want some but not all.
 pub struct SepaxPlugin;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub enum SepaxSystems
 {
 
@@ -36,35 +36,34 @@ impl Plugin for SepaxPlugin
     {
 
         app
-        .add_system_to_stage
+        .add_systems
         (
-
-            CoreStage::PostUpdate,
+            PostUpdate,
             clear_correction_system
-            .label(SepaxSystems::Clear)
+            .in_set(SepaxSystems::Clear)
 
         )
-        .add_system_to_stage
+        .add_systems
         (
 
-            CoreStage::PostUpdate,
+            PostUpdate,
             update_movable_system.after(clear_correction_system)
-            .label(SepaxSystems::Update)
+            .in_set(SepaxSystems::Update)
 
         )
-        .add_system_to_stage
+        .add_systems
         (
-            
-            CoreStage::PostUpdate, 
+
+            PostUpdate,
             collision_system
-            .label(SepaxSystems::Collision)
+            .in_set(SepaxSystems::Collision)
             .after(SepaxSystems::Update)
-            .before(bevy::transform::transform_propagate_system)
+            .before(bevy::transform::systems::propagate_transforms)
 
         );
 
         #[cfg(feature = "debug")]
-        app.add_plugin(ShapePlugin);
+        app.add_plugins(ShapePlugin);
 
     }
 

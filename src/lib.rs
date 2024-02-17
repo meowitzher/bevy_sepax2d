@@ -135,12 +135,14 @@ pub enum Convex
 /// 
 /// Requires the "debug" feature.
 #[cfg(feature = "debug")]
-pub fn spawn_debug(commands: &mut Commands, convex: Convex, fill: DrawMode)
+pub fn spawn_debug(commands: &mut Commands, convex: Convex, fill: Fill)
 {
 
-    let shape = Sepax::as_shape_bundle(&convex, fill);
+    let shape = Sepax::as_shape_bundle(&convex);
 
-    commands.spawn(Sepax { convex })
+    commands.spawn((Sepax { convex },
+                    fill
+    ))
     .insert(shape);
 
 }
