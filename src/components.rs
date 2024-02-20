@@ -29,7 +29,7 @@ pub struct Sepax
 /// resolution vectors which point away from the immovable object that was
 /// collided with. For example, if landing on flat ground, axes would contain
 /// (0,1) on the next frame.
-/// 
+///
 /// This list is cleared during the `PostUpdate` stage each frame when utilizing 
 /// the plugin.
 #[derive(Component)]
@@ -154,7 +154,7 @@ impl Sepax
     }
 
     /// A mutable reference to the shape. Mostly used so that the position can be updated.
-    /// 
+    ///
     /// When using the `"debug"` feature, you will need to update the rendering information
     /// if you mutate something else about the shape, such as size or vertices.
     pub fn shape_mut(&mut self) -> &mut dyn Shape
@@ -188,10 +188,10 @@ impl Sepax
             {
 
                 let mut builder = PathBuilder::new();
-                
+
                 if let Some((x, y)) = poly.vertices.first()
                 {
-                
+
                     builder.move_to(Vec2::new(*x, *y));
 
                     for (x, y) in poly.vertices.iter().cycle().skip(1).take(poly.vertices.len())
@@ -220,7 +220,7 @@ impl Sepax
             },
             Convex::Circle(circle) =>
             {
-                
+
                 ShapePath::build_as(&shapes::Circle { radius: circle.radius, center: Vec2::new(0.0, 0.0) })
 
             },
@@ -258,10 +258,10 @@ impl Sepax
     /// Simple insert the return value into your entity as with any other bundle. Note that this
     /// does not insert the `Sepax` component itself, so that needs to be inserted as well if
     /// you want collisions to occur.
-    /// 
+    ///
     /// Requires "debug" feature.
     #[cfg(feature = "debug")]
-    pub fn as_shape_bundle(convex: &Convex, fill: DrawMode) -> ShapeBundle
+    pub fn as_shape_bundle(convex: &Convex) -> ShapeBundle
     {
 
         let position = match convex
@@ -277,7 +277,20 @@ impl Sepax
 
         let shape = Sepax::shape_geometry(convex);
 
-        GeometryBuilder::build_as(&shape, fill, Transform::from_xyz(position.0, position.1, 0.0))
+        let path = GeometryBuilder::build_as(&shape);
+         ShapeBundle
+         {
+             path,
+             mesh: Default::default(),
+             spatial: SpatialBundle {
+                    transform: Transform {
+                        translation: Vec3::new(position.0, position.1, 0.0),
+                        ..Default::default()
+                    },
+                 ..default()
+             },
+             ..Default::default()
+         }
 
     }
 

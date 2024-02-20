@@ -1,4 +1,6 @@
+use std::slice::Windows;
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 use bevy_prototype_lyon::prelude::*;
 
 use sepax2d::prelude::*;
@@ -75,54 +77,49 @@ fn main()
 
         WindowPlugin
         {
-
-            window: WindowDescriptor
+            primary_window: Some(Window
             {
         
                 title: "Platformer Example".to_string(),
-                width: 1024.0,
-                height: 768.0,
+                resolution: WindowResolution::new(1024.0, 768.0),
                 ..default()
         
-            },
+            }),
             ..default()
 
         }
 
     ))
-    .add_plugin(SepaxPlugin)
-    .add_startup_system(setup_system)
-    .add_startup_system(player_setup_system)
-    .add_startup_system_to_stage(StartupStage::PostStartup, wall_setup_system)
-    .add_system_to_stage(CoreStage::PreUpdate, velocity_correction_system)
-    .add_system(player_movement_input_system.before(gravity_system))
-    .add_system(player_collider_system)
-    .add_system(gravity_system)
-    .add_system(velocity_system)
+    .add_plugins(SepaxPlugin)
+    .add_systems(Startup, setup_system)
+    .add_systems(Startup, player_setup_system)
+    .add_systems(PostStartup, wall_setup_system)
+    .add_systems(PreUpdate, velocity_correction_system)
+    .add_systems(Update, player_movement_input_system.before(gravity_system))
+    .add_systems(Update, player_collider_system)
+    .add_systems(Update, gravity_system)
+    .add_systems(Update, velocity_system)
     .run();
 
 }
 
-fn setup_system(mut commands: Commands, mut windows: ResMut<Windows>, assets: Res<AssetServer>)
+fn setup_system(mut commands: Commands, mut windows: Query<&mut Window>, assets: Res<AssetServer>)
 {
-
-    let window = windows.get_primary_mut().unwrap();
+    let window = windows.get_single_mut().unwrap();
     let window_size = WindowSize { width: window.width(), height: window.height() };
     commands.insert_resource(window_size);
 
     commands.spawn(Camera2dBundle::default());
 
     let font = assets.load("PolandCanInto.otf");
-    let text_alignment = TextAlignment { vertical: VerticalAlign::Center, horizontal: HorizontalAlign::Center };
+    let text_alignment = TextAlignment::Center;
     let text_style = TextStyle { font, font_size: 30.0, color: Color::rgba(0.8, 0.8, 0.8, 1.0) };
 
     commands.spawn(Text2dBundle
     {
-
         text: Text::from_section("A and D to move, Space to jump \n \n W to change colliders", text_style.clone()).with_alignment(text_alignment),
         transform: Transform::from_xyz(0.0, 300.0, 0.0),
         ..default()
-
     });
 
 }
@@ -136,11 +133,11 @@ fn player_setup_system(mut commands: Commands)
     let circle = Circle::new((0.0, 0.0), 25.0);
     let polygon = Polygon::from_vertices((0.0, 0.0), vec![(0.0, -25.0), (15.0, 15.0), (-15.0, 15.0)]);
 
-    let player = DrawMode::Fill(FillMode::color(Color::rgba(0.4, 0.4, 1.0, 1.0)));
+    let player = Fill::color(Color::rgba(0.4, 0.4, 1.0, 1.0));
 
     let convex = Convex::Polygon(polygon.clone());
 
-    commands.spawn(Sepax::as_shape_bundle(&convex, player))
+    commands.spawn((Sepax::as_shape_bundle(&convex), player))
     .insert(Sepax { convex })
     .insert(Movable { axes: Vec::new() })
     .insert(Velocity { x: 0.0, y: 0.0 });
@@ -152,7 +149,7 @@ fn player_setup_system(mut commands: Commands)
 fn wall_setup_system(mut commands: Commands, size: Res<WindowSize>)
 {
 
-    let walls = DrawMode::Fill(FillMode::color(Color::rgba(0.8, 0.8, 0.8, 1.0)));
+    let walls = Fill::color(Color::rgba(0.8, 0.8, 0.8, 1.0));
 
     let half_width = size.width * 0.5;
     let half_height = size.height * 0.5;
