@@ -9,6 +9,7 @@
 //!
 //! |bevy|bevy_sepax2d|
 //! |---|---|
+//! |0.12|0.5|
 //! |0.9|0.4|
 //! |0.8|0.2, 0.3|
 //! |0.7|0.1|
@@ -19,7 +20,7 @@
 //!
 //! ```toml
 //! sepax2d = "0.3"
-//! bevy_sepax2d = "0.3"
+//! bevy_sepax2d = "0.5"
 //! ```
 //! 
 //! There is an additional `debug` feature which can be used to render collision shapes to the screen.
@@ -27,9 +28,10 @@
 //! for rendering. This can be enabled in your Cargo.toml:
 //! 
 //! ```toml
-//! bevy_sepax2d = { version = "0.3", features = ["debug"] }
+//! bevy_sepax2d = { version = "0.5", features = ["debug"] }
 //! ```
-//! 
+//! Documentation for version 0.4: check the examples for code working with 0.5 (Bevy 0.12)
+//!
 //! To add a shape to your world, simply insert a [`Sepax`](components::Sepax) struct into any entity.
 //! 
 //! ```rust,no_run

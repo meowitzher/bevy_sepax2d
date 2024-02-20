@@ -28,8 +28,10 @@ This relies on Bevy's default features as well as [bevy_prototype_lyon](https://
 for rendering. This can be enabled in your Cargo.toml:
 
 ```toml
-bevy_sepax2d = { version = "0.3", features = ["debug"] }
+bevy_sepax2d = { version = "0.5", features = ["debug"] }
 ```
+
+Documentation for version 0.4 and older: check the examples for code working with 0.5 (Bevy 0.12)
 
 To add a shape to your world, simply insert a `Sepax` struct into any entity.
 
